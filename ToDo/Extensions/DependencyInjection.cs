@@ -10,6 +10,8 @@ public static class DependencyInjection
     {
         services.AddScoped<IProjectService, ProjectService>();
         services.AddScoped<IStatusService, StatusService>();
+        services.AddScoped<ITaskService, TaskService>();
+        services.AddScoped<IProjectStatusHistoryService, ProjectStatusHistoryService>();
 
         return services;
     }

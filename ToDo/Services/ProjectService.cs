@@ -2,6 +2,8 @@
  using ToDo.Infrastructure.Contexts;
 using ToDo.Application.DTOs;
 using ToDo.Domain.Entities;
+using ToDo.Application.DTOs.Project;
+using ToDo.Application.DTOs.Status;
 
 namespace ToDo.Application.Services
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ToDo.API.Services;
-using ToDo.Application.DTOs;
+using ToDo.Application.DTOs.Project;
 using ToDo.Application.Services;
 
 
@@ -19,7 +19,7 @@ public class ProjectsController : Controller
 
     private string ActorUserId => "System"; // jwt şuan eklemediğim için böyle
     [HttpPost]
-    public async Task<ActionResult<Guid>> Create([FromBody] CreateProjectRequest request)
+    public async Task<ActionResult<Guid>> Create([FromQuery] CreateProjectRequest request)
     {
         if (request is null)
             return BadRequest("Request body is required.");

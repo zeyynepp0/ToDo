@@ -21,7 +21,7 @@ namespace ToDo.Domain.Entities
         public string? CompletedByUserId { get; set; }
         public DateTime? CompletedAt { get; set; }
 
-        public Guid OrderNo { get; set; } 
+        public int OrderNo { get; set; } 
 
         
         public Project Project { get; set; } = default!;

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ToDo.Application.DTOs
+namespace ToDo.Application.DTOs.Status
 {
     //sealed bu sınıftan miraz alınamaz demektir
     public sealed class ProjectStatusResponse

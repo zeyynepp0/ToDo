@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ToDo.Application.DTOs;
 using ToDo.Domain.Entities;
 using ToDo.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
-using ToDo.Application.DTOs;
 using ToDo.Domain.Entities;
 using ToDo.API.Services;
+using ToDo.Application.DTOs.Status;
 
 namespace ToDo.API.Service
 {

@@ -4,17 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ToDo.Application.DTOs
+namespace ToDo.Application.DTOs.Project
 {
-    public sealed class TaskTreeResponse
+    public sealed class ProjectSummaryResponse
     {
         public Guid Id { get; set; }
-        public string Title { get; set; } = default!;
+        public string Name { get; set; } = default!;
         public string? Description { get; set; }
 
         public bool IsCompleted { get; set; }
-        public int OrderNo { get; set; }
-
-        public List<TaskTreeResponse> Children { get; set; } = new();
+        public DateTime CreatedDate { get; set; }
     }
 }

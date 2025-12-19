@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ToDo.Application.DTOs
+namespace ToDo.Application.DTOs.Status
 {
-    public sealed class UpdateProjectRequest
+    public sealed class AddCustomStatusRequest
     {
         public string Name { get; set; } = default!;
-        public string? Description { get; set; }
     }
 }

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ToDo.Application.DTOs.Status;
 
-namespace ToDo.Application.DTOs
+namespace ToDo.Application.DTOs.Project
 {
     public sealed class ProjectDetailResponse
     {

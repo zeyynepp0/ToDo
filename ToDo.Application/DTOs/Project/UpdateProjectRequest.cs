@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ToDo.Application.DTOs
+namespace ToDo.Application.DTOs.Project
 {
-    public sealed class CreateProjectRequest
+    public sealed class UpdateProjectRequest
     {
         public string Name { get; set; } = default!;
         public string? Description { get; set; }

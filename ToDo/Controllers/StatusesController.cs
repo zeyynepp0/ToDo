@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ToDo.API.Service;
 using ToDo.API.Services;
-using ToDo.Application.DTOs;
+using ToDo.Application.DTOs.Status;
 
 namespace ToDo.API.Controllers;
 
@@ -33,7 +33,7 @@ public class StatusesController : Controller
     // statusları yeniden sıralar.
     public async Task<IActionResult> Reorder(
         [FromRoute] Guid projectId,
-        [FromBody] List<ReorderProjectStatusItem> items)
+        [FromQuery] List<ReorderProjectStatusItem> items)
     {
         if (items is null || items.Count == 0)
             return BadRequest("Reorder list cannot be empty.");
@@ -64,7 +64,7 @@ public class StatusesController : Controller
     public async Task<IActionResult> Toggle(
         [FromRoute] Guid projectId,
         [FromRoute] Guid projectStatusId,
-        [FromBody] ToggleProjectStatusRequest request)
+        [FromQuery] ToggleProjectStatusRequest request)
     {
         if (request is null)
             return BadRequest("Request body is required.");
@@ -83,7 +83,7 @@ public class StatusesController : Controller
                         // özel bir status ekler.
     public async Task<IActionResult> AddCustomStatus(
         [FromRoute] Guid projectId,
-        [FromBody] AddCustomStatusRequest request)
+        [FromQuery] AddCustomStatusRequest request)
     {
         if (request is null)
             return BadRequest("Request body is required.");

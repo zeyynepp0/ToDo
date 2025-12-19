@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ToDo.Application.DTOs;
+using ToDo.Application.DTOs.Project;
 
 namespace ToDo.Application.Services
 {

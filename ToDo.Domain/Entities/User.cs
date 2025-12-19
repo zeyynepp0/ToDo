@@ -16,8 +16,8 @@ namespace ToDo.Domain.Entities
         public string? PhoneNumber { get; set; }
         public bool GeneralNotificationActive { get; set; } = false;
 
-        public byte[] PasswordHash { get; set; }
-        public byte[] PasswordSalt { get; set; }
+        public string PasswordHash { get; set; }
+        //public string[] PasswordSalt { get; set; }
 
      
         public DateTime RegisteredDate { get; set; }
@@ -32,5 +32,7 @@ namespace ToDo.Domain.Entities
         //ilişkiler (Foreign Key)
         public Guid RoleId { get; set; }
         public Role Role { get; set; }
+
+       
     }
 }

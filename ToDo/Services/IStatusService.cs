@@ -1,4 +1,4 @@
-﻿using ToDo.Application.DTOs;
+﻿using ToDo.Application.DTOs.Status;
 
 namespace ToDo.API.Services;
 
