@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ToDo.Application.DTOs.Tasks;
-using ToDo.API.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using ToDo.API.Services;
+using ToDo.Application.DTOs.Tasks;
 
 namespace ToDo.API.Controllers;
 
@@ -16,9 +17,10 @@ public sealed class TasksController : ControllerBase
         _tasks = tasks;
     }
 
-    private string ActorUserId => "System";
+    //private string ActorUserId => "System";
+    private string ActorUserId =>
+    User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System";
 
-    
     [HttpPost("tasks")]// Görev oluştur
     public async Task<ActionResult<Guid>> CreateTask([FromRoute] Guid projectId, [FromQuery] CreateTaskRequest request)
     {

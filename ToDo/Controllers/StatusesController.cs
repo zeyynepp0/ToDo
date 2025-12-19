@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using ToDo.API.Service;
 using ToDo.API.Services;
 using ToDo.Application.DTOs.Status;
@@ -16,8 +17,9 @@ public class StatusesController : Controller
         _statusService = statusService;
     }
 
-    private string ActorUserId => "System";// sonra silenecek jwt olmadığı için ekledik
-
+    //private string ActorUserId => "System";// sonra silenecek jwt olmadığı için ekledik
+    private string ActorUserId =>
+    User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System";
 
     [HttpGet] // api/projects/{projectId:guid}/statuses
     // sırlaı olarak tüm statusları getirir.

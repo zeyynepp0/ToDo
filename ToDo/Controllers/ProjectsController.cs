@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using ToDo.API.Services;
 using ToDo.Application.DTOs.Project;
 using ToDo.Application.Services;
 
 
 namespace ToDo.API.Controllers;
+
 
 [ApiController]
 [Route("api/[controller]")]
@@ -17,7 +20,10 @@ public class ProjectsController : Controller
         _projects = projects;
     }
 
-    private string ActorUserId => "System"; // jwt şuan eklemediğim için böyle
+    //private string ActorUserId => "System"; // jwt şuan eklemediğim için böyle
+    private string ActorUserId =>
+    User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System";
+
     [HttpPost]
     public async Task<ActionResult<Guid>> Create([FromQuery] CreateProjectRequest request)
     {
@@ -32,6 +38,8 @@ public class ProjectsController : Controller
         return Ok(id);
     }
 
+
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<ActionResult<List<ProjectSummaryResponse>>> GetAll()
     {

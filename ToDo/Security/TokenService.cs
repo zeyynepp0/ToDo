@@ -18,6 +18,16 @@ public class TokenService: ITokenService
 
     public string CreateAccessToken(User user, string roleName)
     {
+
+        if (string.IsNullOrWhiteSpace(_opt.Key))
+            throw new InvalidOperationException("JWT Key is missing. Check appsettings.json -> Jwt:Key");
+        if (string.IsNullOrWhiteSpace(_opt.Issuer))
+            throw new InvalidOperationException("JWT Issuer is missing. Check appsettings.json -> Jwt:Issuer");
+        if (string.IsNullOrWhiteSpace(_opt.Audience))
+            throw new InvalidOperationException("JWT Audience is missing. Check appsettings.json -> Jwt:Audience");
+
+        roleName = string.IsNullOrWhiteSpace(roleName) ? "User" : roleName;
+
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),

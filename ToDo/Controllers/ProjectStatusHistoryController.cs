@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ToDo.Application.DTOs.Status;
+using System.Security.Claims;
 using ToDo.API.Services;
+using ToDo.Application.DTOs.Status;
 
 namespace ToDo.API.Controllers;
 
@@ -15,7 +16,9 @@ public sealed class ProjectStatusHistoryController : Controller
         _history = history;
     }
 
-    private string ActorUserId => "System";
+    //private string ActorUserId => "System";
+    private string ActorUserId =>
+    User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System";
 
     [HttpPut("transition")]
     public async Task<IActionResult> Transition(Guid projectId, [FromBody] TransitionProjectStatusRequest request)

@@ -12,8 +12,8 @@ using ToDo.Infrastructure.Contexts;
 namespace ToDo.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251219121422_ChangePasswordHashToString")]
-    partial class ChangePasswordHashToString
+    [Migration("20251219122846_FixDuplicateChangedByUserId")]
+    partial class FixDuplicateChangedByUserId
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -146,10 +146,6 @@ namespace ToDo.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ChangedByUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ChangedByuserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
