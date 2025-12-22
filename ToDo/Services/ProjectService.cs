@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
- using ToDo.Infrastructure.Contexts;
 using ToDo.Application.DTOs;
-using ToDo.Domain.Entities;
 using ToDo.Application.DTOs.Project;
 using ToDo.Application.DTOs.Status;
+using ToDo.Application.DTOs.Tasks;
+using ToDo.Domain.Entities;
+ using ToDo.Infrastructure.Contexts;
 
 namespace ToDo.Application.Services
 {
@@ -21,7 +22,7 @@ namespace ToDo.Application.Services
         public async Task<Guid> CreateProjectAsync(CreateProjectRequest request, string actorUserId)
         {
             if (request is null) throw new ArgumentNullException(nameof(request));
-            if (string.IsNullOrWhiteSpace(actorUserId)) actorUserId = "System";
+            //if (string.IsNullOrWhiteSpace(actorUserId)) actorUserId = "System";
 
             var project = new Project
             {
@@ -91,7 +92,7 @@ namespace ToDo.Application.Services
                 ProjectId = project.Id,
                 FromProjectStatusId = null,
                 ToProjectStatusId = psNew.Id,
-                ChangedByUserId = actorUserId, 
+                ChangedByUserId = actorUserId,
                 ChangedAt = DateTime.UtcNow,
                 Note = "Project created -> initial status set"
 
@@ -124,20 +125,20 @@ namespace ToDo.Application.Services
         public async Task<ProjectDetailResponse?> GetProjectByIdAsync(Guid projectId)
         {
             var project = await _db.Projects
-           .AsNoTracking()
-           .Where(x => x.Id == projectId)
-           .Select(x => new ProjectDetailResponse
-           {
-               Id = x.Id,
-               Name = x.Name,
-               Description = x.Description,
-               CreatedDate = x.CreatedDate
-           })
-           .FirstOrDefaultAsync();
+                .AsNoTracking()
+                .Where(x => x.Id == projectId)
+                .Select(x => new ProjectDetailResponse
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Description = x.Description,
+                    CreatedDate = x.CreatedDate
+                })
+                .FirstOrDefaultAsync();
 
             if (project is null) return null;
 
-            // Statuses (order)
+            // Statuses
             project.Statuses = await _db.ProjectStatuses
                 .AsNoTracking()
                 .Where(ps => ps.ProjectId == projectId)
@@ -150,12 +151,100 @@ namespace ToDo.Application.Services
                     IsEnabled = ps.IsEnabled,
                     Name = ps.StatusDefinition.Name,
                     SystemCode = ps.StatusDefinition.SystemCode,
-                    IsSystem = ps.StatusDefinition.IsSystem
+                    IsSystem = ps.StatusDefinition.IsSystem,
+                    Tasks = new List<TaskTreeResponse>() // boş başlat
                 })
                 .ToListAsync();
 
+            // All tasks (flat)
+            var allTasks = await _db.ProjectTasks
+                .AsNoTracking()
+                .Where(t => t.ProjectId == projectId)
+                .OrderBy(t => t.OrderNo)
+                .Select(t => new TaskTreeResponse
+                {
+                    Id = t.Id,
+                    ProjectStatusId = t.ProjectStatusId,
+                    ParentTaskId = t.ParentTaskId ?? Guid.Empty,
+                    Title = t.Title,
+                    Description = t.Description,
+                    IsCompleted = t.IsCompleted,
+                    OrderNo = t.OrderNo,
+                    Children = new List<TaskTreeResponse>()
+                })
+                .ToListAsync();
+
+            // Build trees once -> Dictionary<StatusId, RootTasks>
+            var treesByStatus = BuildTreesByStatus(allTasks);
+
+            // Assign to statuses
+            foreach (var st in project.Statuses)
+            {
+                st.Tasks = treesByStatus.TryGetValue(st.ProjectStatusId, out var roots)
+                    ? roots
+                    : new List<TaskTreeResponse>();
+            }
+
             return project;
         }
+
+
+        private static Dictionary<Guid, List<TaskTreeResponse>> BuildTreesByStatus(List<TaskTreeResponse> tasks)
+        {
+            if (tasks.Count == 0)
+                return new Dictionary<Guid, List<TaskTreeResponse>>();
+
+            // Id -> Task
+            var byId = tasks.ToDictionary(t => t.Id);
+
+            // her ihtimale karşı children reset
+            foreach (var t in tasks)
+                t.Children = new List<TaskTreeResponse>();
+
+            //foreach (var t in tasks)
+            //{
+            //    if (t.ParentTaskId.HasValue &&
+            //        byId.TryGetValue(t.ParentTaskId.Value, out var parent))
+            //    {
+            //        parent.Children.Add(t);
+            //    }
+            //}
+
+            // With this corrected block:
+            foreach (var t in tasks)
+            {
+                // Guid is a non-nullable value type, so check against Guid.Empty
+                if (t.ParentTaskId != Guid.Empty &&
+                    byId.TryGetValue(t.ParentTaskId, out var parent))
+                {
+                    parent.Children.Add(t);
+                }
+            }
+
+
+            // parent-child bağla
+            foreach (var t in tasks)
+            {
+                if (t.ParentTaskId is Guid parentId && byId.TryGetValue(parentId, out var parent))
+                    parent.Children.Add(t);
+            }
+
+
+
+            // children listelerini OrderNo'ya göre sırala (tüm seviyelerde)
+            foreach (var t in tasks)
+                t.Children = t.Children.OrderBy(c => c.OrderNo).ToList();
+
+            // root'ları status'a göre grupla
+            return tasks
+                .Where(t => t.ParentTaskId == Guid.Empty)
+                .GroupBy(t => t.ProjectStatusId)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.OrderBy(x => x.OrderNo).ToList()
+                );
+        }
+
     }
-    }
+}
 

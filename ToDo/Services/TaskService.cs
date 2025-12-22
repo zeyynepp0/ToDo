@@ -90,7 +90,7 @@ public sealed class TaskService : ITaskService
             {
                 Id = t.Id,
                 ProjectStatusId = t.ProjectStatusId,
-                ParentTaskId = t.ParentTaskId,
+                ParentTaskId = t.ParentTaskId ?? Guid.Empty,
                 Title = t.Title,
                 Description = t.Description,
                 IsCompleted = t.IsCompleted,
@@ -104,13 +104,13 @@ public sealed class TaskService : ITaskService
 
         foreach (var node in all)
         {
-            if (node.ParentTaskId is null)
+            if (node.ParentTaskId == Guid.Empty)
             {
                 roots.Add(node);
                 continue;
             }
 
-            if (dict.TryGetValue(node.ParentTaskId.Value, out var parent))
+            if (dict.TryGetValue(node.ParentTaskId, out var parent))
                 parent.Children.Add(node);
             else
                 roots.Add(node); // parent bulunamazsa root say
@@ -216,7 +216,7 @@ public sealed class TaskService : ITaskService
     }
 
     //--------------------- ReorderASync --------------------
-    public async Task ReorderAsync(Guid projectId, Guid projectStatusId, Guid? parentTaskId, List<ReorderTaskItem> items, string actorUserId)
+    public async Task ReorderAsync(Guid projectId, Guid projectStatusId, Guid parentTaskId, List<ReorderTaskItem> items, string actorUserId)
     {
         if (items is null || items.Count == 0)
             throw new InvalidOperationException("Items are required.");

@@ -39,7 +39,7 @@ public class ProjectsController : Controller
     }
 
 
-    [Authorize(Roles = "Admin")]
+   // [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<ActionResult<List<ProjectSummaryResponse>>> GetAll()
     {

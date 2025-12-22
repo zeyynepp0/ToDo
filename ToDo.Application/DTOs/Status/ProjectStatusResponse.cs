@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ToDo.Application.DTOs.Tasks;
 
 namespace ToDo.Application.DTOs.Status
 {
@@ -19,5 +20,7 @@ namespace ToDo.Application.DTOs.Status
         public bool IsEnabled { get; set; }
 
         public int OrderNo { get; set; }
+
+        public List<TaskTreeResponse> Tasks { get; set; } = new();
     }
 }

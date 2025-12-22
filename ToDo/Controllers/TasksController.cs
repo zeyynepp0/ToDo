@@ -61,7 +61,7 @@ public sealed class TasksController : ControllerBase
     public async Task<IActionResult> ReorderTasks(
         Guid projectId,
         Guid projectStatusId,
-        [FromQuery] Guid? parentTaskId,
+        [FromQuery] Guid parentTaskId,
         [FromBody] List<ReorderTaskItem> items)
     {
         try
