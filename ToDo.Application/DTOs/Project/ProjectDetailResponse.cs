@@ -18,4 +18,9 @@ namespace ToDo.Application.DTOs.Project
 
         public List<ProjectStatusResponse> Statuses { get; set; } = new();
     }
+
+    //public record MyReq(string id, string Name);
+
+    //var req = new MyReq("123","12");
+
 }

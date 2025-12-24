@@ -1,10 +1,12 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System.Security.Claims;
 using ToDo.API.Security;
 using ToDo.Application.DTOs.Auth;
 using ToDo.Domain.Entities;
 using ToDo.Infrastructure.Contexts;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace ToDo.API.Services;
 
@@ -43,6 +45,10 @@ public class AuthService: IAuthService
         };
 
         _db.Users.Add(user);
+
+        var refresh = _tokens.CreateRefreshToken(user.Id);
+        _db.RefreshTokens.Add(refresh);
+
         await _db.SaveChangesAsync();
 
         var token = _tokens.CreateAccessToken(user, userRole.Name);
@@ -50,6 +56,7 @@ public class AuthService: IAuthService
         return new AuthResponse
         {
             AccessToken = token,
+            RefreshToken = refresh.Token,
             ExpiresInMinutes = _jwt.AccessTokenMinutes,
             Role = userRole.Name,
             UserId = user.Id.ToString(),
@@ -74,13 +81,62 @@ public class AuthService: IAuthService
 
         var token = _tokens.CreateAccessToken(user, roleName);
 
+        var refresh = _tokens.CreateRefreshToken(user.Id);
+        _db.RefreshTokens.Add(refresh);
+
+        await _db.SaveChangesAsync();
+
         return new AuthResponse
         {
             AccessToken = token,
+            RefreshToken = refresh.Token,
             ExpiresInMinutes = _jwt.AccessTokenMinutes,
             Role = roleName,
             UserId = user.Id.ToString(),
             Email = user.Email
         };
     }
+
+    public async Task<TokenResponse> RefreshAsync(RefreshRequest req)
+    {
+        var principal = _tokens.GetPrincipalFromExpiredToken(req.AccessToken);
+
+        var userIdStr =
+            principal.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            ?? principal.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+
+        if (!Guid.TryParse(userIdStr, out var userId))
+            throw new InvalidOperationException("Invalid token");
+
+        var storedToken = await _db.RefreshTokens
+            .FirstOrDefaultAsync(x => x.Token == req.RefreshToken && x.UserId == userId);
+
+        if (storedToken is null || !storedToken.IsActive)
+            throw new InvalidOperationException("Invalid refresh token");
+
+        // 🔁 ROTATION: eskiyi revoke et
+        storedToken.RevokedAt = DateTime.UtcNow;
+
+        // yeni refresh oluştur
+        var newRefresh = _tokens.CreateRefreshToken(userId);
+
+        // zincir bağlantısı (opsiyonel ama iyi)
+        storedToken.ReplacedByTokenId = newRefresh.Id;
+
+        _db.RefreshTokens.Add(newRefresh);
+
+        // access token üret
+        var user = await _db.Users
+            .Include(u => u.Role)
+            .FirstAsync(x => x.Id == userId);
+
+        var role = user.Role?.Name ?? principal.FindFirstValue(ClaimTypes.Role) ?? "User";
+
+        var newAccess = _tokens.CreateAccessToken(user, role);
+
+        await _db.SaveChangesAsync();
+
+        return new TokenResponse(newAccess, newRefresh.Token);
+    }
+
 }

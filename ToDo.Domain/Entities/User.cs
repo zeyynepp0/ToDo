@@ -32,7 +32,8 @@ namespace ToDo.Domain.Entities
         //ilişkiler (Foreign Key)
         public Guid RoleId { get; set; }
         public Role Role { get; set; }
+        public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 
-       
+
     }
 }

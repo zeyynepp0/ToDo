@@ -26,4 +26,13 @@ public sealed class AuthController : ControllerBase
         try { return Ok(await _auth.LoginAsync(req)); }
         catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
     }
+
+    [HttpPost("refresh")]
+    public async Task<ActionResult<TokenResponse>> Refresh([FromBody] RefreshRequest req)
+    {
+        try { return Ok(await _auth.RefreshAsync(req)); }
+        catch (InvalidOperationException ex) { return Unauthorized(ex.Message); }
+    }
+
+
 }

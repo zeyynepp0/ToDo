@@ -23,6 +23,7 @@ public class AppDbContext :DbContext
     public DbSet<ProjectStatusHistory> ProjectStatusHistories { get; set; }
     public DbSet<ProjectTask> ProjectTasks { get; set; }
 
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -264,6 +265,18 @@ public class AppDbContext :DbContext
             entity.HasIndex(x => new { x.ProjectStatusId, x.ParentTaskId, x.OrderNo }).IsUnique();
 
         });
+
+
+
+        modelBuilder.Entity<RefreshToken>()
+            .HasIndex(x => x.Token)
+            .IsUnique();
+
+        modelBuilder.Entity<RefreshToken>()
+            .HasOne(x => x.User)
+            .WithMany(u => u.RefreshTokens)
+            .HasForeignKey(x => x.UserId);
+
 
         base.OnModelCreating(modelBuilder);
     }
