@@ -12,13 +12,13 @@ namespace ToDo.Application.Validations
     {
         public UserRegisterDtoValidator()
         {
-            RuleFor(x => x.FirstName)
-                .NotEmpty().WithMessage("Ad alanı boş geçilemez.")
-                .MaximumLength(50).WithMessage("Ad 50 karakterden uzun olamaz.");
+        //    RuleFor(x => x.FirstName)
+        //        .NotEmpty().WithMessage("Ad alanı boş geçilemez.")
+        //        .MaximumLength(50).WithMessage("Ad 50 karakterden uzun olamaz.");
 
-        RuleFor(x => x.LastName)
-                .NotEmpty().WithMessage("Soyad alanı boş geçilemez.")
-                .MaximumLength(50).WithMessage("Soyad 50 karakterden uzun olamaz.");
+        //RuleFor(x => x.LastName)
+        //        .NotEmpty().WithMessage("Soyad alanı boş geçilemez.")
+        //        .MaximumLength(50).WithMessage("Soyad 50 karakterden uzun olamaz.");
 
         RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("E-posta adresi gereklidir.")
@@ -30,10 +30,10 @@ namespace ToDo.Application.Validations
                 .Matches(@"[!@#$%^&*(),.?""{}|<>]").WithMessage("Şifre en az bir özel karakter içermelidir.");
 
 
-            RuleFor(x => x.PhoneNumber)
-                .MaximumLength(20).WithMessage("Telefon numarası çok uzun.")
-                .Matches(@"^\+?\d{10,15}$").WithMessage("Telefon numarasınıdoğru formatta giriniz.")
-                .When(x => !string.IsNullOrEmpty(x.PhoneNumber));
+            //RuleFor(x => x.PhoneNumber)
+            //    .MaximumLength(20).WithMessage("Telefon numarası çok uzun.")
+            //    .Matches(@"^\+?\d{10,15}$").WithMessage("Telefon numarasınıdoğru formatta giriniz.")
+            //    .When(x => !string.IsNullOrEmpty(x.PhoneNumber));
     }
 }
 }
