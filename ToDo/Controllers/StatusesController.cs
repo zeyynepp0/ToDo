@@ -35,7 +35,7 @@ public class StatusesController : Controller
     // statusları yeniden sıralar.
     public async Task<IActionResult> Reorder(
         [FromRoute] Guid projectId,
-        [FromQuery] List<ReorderProjectStatusItem> items)
+        [FromBody] List<ReorderProjectStatusItem> items)
     {
         if (items is null || items.Count == 0)
             return BadRequest("Reorder list cannot be empty.");
@@ -96,4 +96,18 @@ public class StatusesController : Controller
         var id = await _statusService.AddCustomStatusAsync(projectId, request.Name.Trim(), ActorUserId);
         return Ok(id);
     }
+
+    [HttpPut("change")]
+    public async Task<IActionResult> ChangeStatus(
+    [FromRoute] Guid projectId,
+    [FromQuery] Guid toStatusDefinitionId)
+    {
+        await _statusService.ChangeStatusAsync(
+            projectId,
+            toStatusDefinitionId,
+            ActorUserId);
+
+        return NoContent();
+    }
+
 }

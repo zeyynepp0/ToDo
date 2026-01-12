@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ToDo.Infrastructure.Contexts;
 
@@ -11,9 +12,11 @@ using ToDo.Infrastructure.Contexts;
 namespace ToDo.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251224144406_AddStatusTransitions")]
+    partial class AddStatusTransitions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,9 +49,6 @@ namespace ToDo.Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<Guid?>("CurrentProjectStatusId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("DeletedByUserId")
                         .HasColumnType("nvarchar(max)");
 
@@ -74,8 +74,6 @@ namespace ToDo.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CurrentProjectStatusId");
 
                     b.ToTable("Projects");
                 });
@@ -146,10 +144,6 @@ namespace ToDo.Infrastructure.Migrations
 
                     b.Property<DateTime>("ChangedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("ChangedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ChangedByUserId")
                         .IsRequired()
@@ -577,16 +571,6 @@ namespace ToDo.Infrastructure.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("ToDo.Domain.Entities.Project", b =>
-                {
-                    b.HasOne("ToDo.Domain.Entities.ProjectStatus", "CurrentProjectStatus")
-                        .WithMany()
-                        .HasForeignKey("CurrentProjectStatusId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CurrentProjectStatus");
                 });
 
             modelBuilder.Entity("ToDo.Domain.Entities.ProjectStatus", b =>

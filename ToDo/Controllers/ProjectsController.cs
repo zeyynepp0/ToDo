@@ -4,6 +4,7 @@ using System.Security.Claims;
 using ToDo.API.Services;
 using ToDo.Application.DTOs.Project;
 using ToDo.Application.Services;
+using System.Security.Claims;
 
 
 namespace ToDo.API.Controllers;
@@ -11,9 +12,13 @@ namespace ToDo.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+
+
 public class ProjectsController : Controller
 {
     private readonly IProjectService _projects;
+    private string ActorUserId =>
+    User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "System";
 
     public ProjectsController(IProjectService projects)
     {
@@ -21,12 +26,13 @@ public class ProjectsController : Controller
     }
 
     //private string ActorUserId => "System"; // jwt şuan eklemediğim için böyle
-    private string ActorUserId =>
-    User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System";
+    //private string ActorUserId =>
+    //User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System";
 
     [HttpPost]
     public async Task<ActionResult<Guid>> Create([FromQuery] CreateProjectRequest request)
     {
+
         if (request is null)
             return BadRequest("Request body is required.");
 

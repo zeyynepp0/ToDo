@@ -94,7 +94,8 @@ namespace ToDo.Application.Services
                 ToProjectStatusId = psNew.Id,
                 ChangedByUserId = actorUserId,
                 ChangedAt = DateTime.UtcNow,
-                Note = "Project created -> initial status set"
+                Note = "Project created -> initial status set",
+                ChangedBy = actorUserId
 
             });
 

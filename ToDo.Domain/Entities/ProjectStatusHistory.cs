@@ -24,5 +24,6 @@ namespace ToDo.Domain.Entities
         public ProjectStatus? FromProjectStatus { get; set; }
         public ProjectStatus ToProjectStatus { get; set; } = default!;
         public bool IsDeleted { get; set; }
+        public string ChangedBy { get; set; }
     }
 }

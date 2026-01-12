@@ -16,5 +16,9 @@ namespace ToDo.Domain.Entities
         public ICollection<ProjectStatus> ProjectStatuses { get; set; }=new List<ProjectStatus>();
         public ICollection<ProjectStatusHistory> StatusHistory { get; set; } = new List<ProjectStatusHistory>();
         public ICollection<ProjectTask> Tasks { get; set; } = new List<ProjectTask>();
+        public Guid? CurrentProjectStatusId { get; set; }
+        public ProjectStatus? CurrentProjectStatus { get; set; }
+       
+
     }
 }

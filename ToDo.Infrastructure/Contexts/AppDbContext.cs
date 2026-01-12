@@ -25,6 +25,8 @@ public class AppDbContext :DbContext
 
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
+    public DbSet<StatusTransition> StatusTransitions { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // --- User Ayarları ---
@@ -93,16 +95,21 @@ public class AppDbContext :DbContext
         //---- project ----
         modelBuilder.Entity<Project>(entity =>
         {
-            entity.HasKey(e => e.Id);
+            entity.HasKey(e => e.Id);// Primary Key belirler ıd
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Description).HasMaxLength(500);
             //entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.CreatedDate).HasDefaultValueSql("GETDATE()");// otomatik atansın
             entity.HasQueryFilter(x => !x.IsDeleted);// soft delete
-            //entity.HasOne(d => d.User)
-            //      .WithMany(p => p.Projects)
-            //      .HasForeignKey(d => d.UserId)
-            //      .HasQueryFilter(x => !x.IsDeleted);  // soft delete
+           
+
+
+
+            //12.01.2026 current status ilişkisi
+            entity.HasOne(x => x.CurrentProjectStatus)
+                  .WithMany()
+                  .HasForeignKey(x => x.CurrentProjectStatusId)
+                  .OnDelete(DeleteBehavior.Restrict);// projectStatus silinmek istendiğinde ona bağlı proje varsa  silinmesin
         });
 
 
@@ -209,6 +216,21 @@ public class AppDbContext :DbContext
             entity.HasIndex(x => new { x.ProjectId, x.OrderNo }).IsUnique(); //sıralama için
         });
 
+
+        modelBuilder.Entity<StatusTransition>(entity =>
+        {
+            // FromStatusDefinition ile ilişki (Nullable olabilir)
+            entity.HasOne(st => st.FromStatusDefinition)
+                  .WithMany()
+                  .HasForeignKey(st => st.FromStatusDefinitionId)
+                  .OnDelete(DeleteBehavior.Restrict); // Silinirse zincirleme silme yapma
+
+            // ToStatusDefinition ile ilişki
+            entity.HasOne(st => st.ToStatusDefinition)
+                  .WithMany()
+                  .HasForeignKey(st => st.ToStatusDefinitionId)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
 
         //---- ProjectStatusHistory ----
         modelBuilder.Entity<ProjectStatusHistory>(entity =>
