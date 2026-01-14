@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace ToDo.API.Controllers;
 
-
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 
@@ -25,20 +25,12 @@ public class ProjectsController : Controller
         _projects = projects;
     }
 
-    //private string ActorUserId => "System"; // jwt şuan eklemediğim için böyle
-    //private string ActorUserId =>
-    //User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System";
-
+  
     [HttpPost]
     public async Task<ActionResult<Guid>> Create([FromQuery] CreateProjectRequest request)
     {
 
-        if (request is null)
-            return BadRequest("Request body is required.");
-
-        if (string.IsNullOrWhiteSpace(request.Name))
-            return BadRequest("Name is required.");
-
+     
 
         var id = await _projects.CreateProjectAsync(request, ActorUserId);
         return Ok(id);

@@ -294,7 +294,7 @@ namespace ToDo.API.Service
 
             using var tx = await _db.Database.BeginTransactionAsync();
 
-            //  HISTORY
+            
             var history = new ProjectStatusHistory
             {
                 Id = Guid.NewGuid(),
@@ -307,7 +307,7 @@ namespace ToDo.API.Service
 
             _db.ProjectStatusHistories.Add(history);
 
-            //  AKTİF STATÜ GÜNCELLE
+            
             project.CurrentProjectStatusId = toProjectStatus.Id;
 
             await _db.SaveChangesAsync();

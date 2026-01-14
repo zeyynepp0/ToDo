@@ -22,7 +22,7 @@ public static class DependencyInjection
 
         services.AddFluentValidationAutoValidation(); 
         //services.AddFluentValidationClientsideAdapters();
-        services.AddValidatorsFromAssemblyContaining<UserRegisterDtoValidator>();
+       
         return services;
     }
 }

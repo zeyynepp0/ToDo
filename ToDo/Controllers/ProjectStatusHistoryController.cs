@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using ToDo.API.Services;
 using ToDo.Application.DTOs.Status;
 
 namespace ToDo.API.Controllers;
-
+[Authorize]
 [ApiController]
 [Route("api/projects/{projectId:guid}/status")]
 public sealed class ProjectStatusHistoryController : Controller
@@ -16,7 +17,7 @@ public sealed class ProjectStatusHistoryController : Controller
         _history = history;
     }
 
-    //private string ActorUserId => "System";
+
     private string ActorUserId =>
     User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System";
 

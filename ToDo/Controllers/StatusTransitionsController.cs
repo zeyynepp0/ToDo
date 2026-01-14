@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ToDo.API.Services;
 using ToDo.Application.DTOs.Status;
 
 namespace ToDo.API.Controllers;
-
+[Authorize]
 [ApiController]
 [Route("api/status-transitions")]
 public class StatusTransitionsController : Controller

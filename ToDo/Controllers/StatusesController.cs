@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using ToDo.API.Service;
 using ToDo.API.Services;
 using ToDo.Application.DTOs.Status;
 
 namespace ToDo.API.Controllers;
-
+[Authorize]
 [ApiController]
 [Route("api/projects/{projectId:guid}/statuses")]
 public class StatusesController : Controller
@@ -17,7 +18,7 @@ public class StatusesController : Controller
         _statusService = statusService;
     }
 
-    //private string ActorUserId => "System";// sonra silenecek jwt olmadığı için ekledik
+
     private string ActorUserId =>
     User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System";
 
@@ -40,7 +41,7 @@ public class StatusesController : Controller
         if (items is null || items.Count == 0)
             return BadRequest("Reorder list cannot be empty.");
 
-        // orderNo 1..N gibi olsun istiyorsan kontrol:
+   
         if (items.Any(x => x.OrderNo <= 0))
             return BadRequest("OrderNo must be greater than 0.");
 
@@ -51,12 +52,12 @@ public class StatusesController : Controller
         }
         catch (KeyNotFoundException ex)
         {
-            // status id’lerden biri bu projede yok
+           
             return NotFound(ex.Message);
         }
         catch (InvalidOperationException ex)
         {
-            // mantıksal hata
+           
             return BadRequest(ex.Message);
         }
     }
@@ -81,6 +82,7 @@ public class StatusesController : Controller
             return NotFound(ex.Message);
         }
     }
+
     [HttpPost("custom")]// api/projects/{projectId:guid}/statuses/custom
                         // özel bir status ekler.
     public async Task<IActionResult> AddCustomStatus(

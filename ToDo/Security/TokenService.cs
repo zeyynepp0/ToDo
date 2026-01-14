@@ -35,7 +35,7 @@ public class TokenService: ITokenService
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Email, user.Email),
             new(ClaimTypes.Role, roleName),
-            new("role", roleName) // bazen frontend kolay okur
+            new("role", roleName) 
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_opt.Key));
@@ -77,7 +77,7 @@ public class TokenService: ITokenService
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_opt.Key)),
 
-            // 🔥 önemli: expire kontrolünü kapatıyoruz (refresh için)
+          
             ValidateLifetime = false,
 
             ClockSkew = TimeSpan.Zero

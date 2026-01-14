@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using ToDo.API.Services;
 using ToDo.Application.DTOs.Tasks;
 
 namespace ToDo.API.Controllers;
-
+[Authorize]
 [ApiController]
 [Route("api/projects/{projectId:guid}")]
 public sealed class TasksController : ControllerBase
